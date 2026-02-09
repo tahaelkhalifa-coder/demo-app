@@ -1,0 +1,36 @@
+name: Deploy to EKS
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "k8s/**"
+      - ".github/workflows/deploy-to-eks.yaml"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::277848663104:role/GitHubActionsEKSDeployRole
+          aws-region: us-west-1
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.29.0
+
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name taha-demo-eks --region us-west-1
+
+      - name: Deploy manifests
+        run: kubectl apply -f k8s/
