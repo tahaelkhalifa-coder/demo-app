@@ -24,6 +24,13 @@ jobs:
           role-to-assume: arn:aws:iam::277848663104:role/GitHubActionsEKSDeployRole
           aws-region: us-west-1
 
+
+      - name: Who am I (AWS)
+        run: aws sts get-caller-identity
+
+      - name: Check cluster access
+        run: aws eks describe-cluster --name taha-demo-eks --region us-west-1
+
       - name: Install kubectl
         uses: azure/setup-kubectl@v4
         with:
