@@ -49,11 +49,10 @@ jobs:
       - name: Update kubeconfig
         run: aws eks update-kubeconfig --name $EKS_CLUSTER --region $AWS_REGION
 
-      - name: Deploy manifests (namespace + service + deployment)
+      - name: Deploy base manifests (namespace + service only)
         run: |
           kubectl apply -f k8s/namespace.yaml
           kubectl apply -f k8s/service.yaml
-          kubectl apply -f k8s/deployment.yaml
 
       - name: Update deployment image and wait for rollout
         run: |
